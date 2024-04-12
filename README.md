@@ -1,8 +1,8 @@
-# Efficiency Step 1
+# Make Embedding Reduced Tree
 
 Get embedding reduced tree
 
-`version 3.0`
+`version 4.0`
 
 `author: yghuang`
 
@@ -20,8 +20,13 @@ Get embedding reduced tree
 
 5. Before submitting the jobs in step 4, you can prepare a small demo in `test.list` and directly run `./runtest.sh` for testing.
 
-
 ## Change log
+
+12.04.2024 by yghuang (v4.0):
+
+> StRefMultCorr package is not used any longer
+>
+> Instead, a set of modules is imported to be the same as analysis in real data set
 
 14.12.2023 by yghuang (v3.0):
 
