@@ -27,7 +27,12 @@
 #include "TRandom.h"
 #include "TTree.h"
 #include "phys_constants.h"
-#include "../StRefMultCorr/StRefMultCorr.h"
+
+#include "StRoot/CentCorrTool/CentCorrTool.h"
+#include "StRoot/MeanDcaTool/MeanDcaTool.h"
+#include "StRoot/TpcShiftTool/TpcShiftTool.h"
+#include "StRoot/TriggerTool/TriggerTool.h"
+#include "StRoot/StCFMult/StCFMult.h"
 
 StEmbeddingMaker::StEmbeddingMaker(
 	const char* name, 
@@ -64,9 +69,25 @@ Int_t StEmbeddingMaker::Init() {
 
 	fDstTree = new TNtuple("fDstTree", "fDstTree", varList);
 
-	// with StRefMultCorr
-	corr = new StRefMultCorr("refmult"); // using RefMult to do the centrality definition here
-	corr->setVerbose(kFALSE);
+	// initialize costume modules
+
+	// mean dca tool
+	mtDca = new MeanDcaTool();
+	mtDca->ReadParams();
+
+	// centrality tool
+	mtCent = new CentCorrTool();
+	mtCent->EnableIndianMethod(true);
+	mtCent->ReadParams();
+
+	// multiplicity and shift tool
+	mtShift = new TpcShiftTool();
+	mtShift->Init();
+	mtMult = new StCFMult();
+	mtMult->ImportShiftTool(mtShift);
+
+	// trigger tool
+	mtTrg = new TriggerTool();
 
 	nEvents = 0;
 
@@ -114,7 +135,6 @@ Int_t StEmbeddingMaker::Make() {
 	Double_t vx = pVtx.X();
 	Double_t vy = pVtx.Y();
 	Double_t vz = pVtx.Z();
-	Double_t vr = sqrt(vx * vx + vy * vy);
 	Float_t mB = event->bField();
 
 	if (fabs(vx) < 1.e-5 && 
@@ -123,23 +143,40 @@ Int_t StEmbeddingMaker::Make() {
 		return kStOK;
 	}
 
-	if (vr >= 2.0 || fabs(vz) > 50.0) {
+	// using Ashish's shifted vr cut
+	// -> see: https://drupal.star.bnl.gov/STAR/system/files/Vr_xy_N_Vzcut.txt
+	vx = vx - 0.0417;
+	vy = vy + 0.2715;
+	Double_t vr = sqrt(vx * vx + vy * vy);
+
+	if (vr >= 1.0 || fabs(vz) > 50.0) {
 		return kStOK;
 	}
 
 	Int_t runId = event->runId();
-	corr->init(runId);
-	if (corr->isBadRun(runId)) { return kStOK; }
+	Int_t trgid = mtTrg->GetTriggerID(event);
+	if (trgid < 0) { return kStOK; }
 
-	Int_t refmult = event->refMult();
-	Int_t nTofMatch = event->nBTOFMatch();
-	if (corr->isPileUpEvent(refmult, nTofMatch, vz)) { return kStOK; }
-	
-	corr->initEvent(refmult, vz, event->ZDCx());
-	Int_t cent = corr->getCentralityBin9();
-	if (cent < 0) { return kStOK; }
-	cent = 8 - cent; // the official centrality bin 8 is 0-5%, 0 is 70-80%. And what I need is 0 for 0-5% while 8 for 70-80%
+	mtMult->make(mPicoDst);
+	Int_t refMult = mtMult->mRefMult;
+	Int_t tofMult = mtMult->mTofMult;
+	Int_t nTofMatch = mtMult->mNTofMatch;
+	Int_t nTofBeta = mtMult->mNTofBeta;
 
+	Int_t refMult3 = mtMult->mRefMult3;
+	refMult3 = mtCent->GetIndianRefMult3Corr(
+		refMult, refMult3, tofMult, nTofMatch, nTofBeta,
+		vz, false
+	);
+	if (refMult3 < 0) { return kStOK; }
+	Int_t cent = mtCent->GetCentrality9(refMult3);
+	if (cent < 0 || cent >= 9) { return kStOK; }
+
+	// check DCA
+	if (!mtDca->Make(mPicoDst)) { return kStOK; }
+	if (mtDca->IsBadMeanDcaZEvent(mPicoDst) || mtDca->IsBadMeanDcaXYEvent(mPicoDst)) {
+		return kStOK;
+	}
 
 	Int_t numberOfMcTracks = mPicoDst->numberOfMcTracks();
 	Int_t numberOfRcTracks = mPicoDst->numberOfTracks();
