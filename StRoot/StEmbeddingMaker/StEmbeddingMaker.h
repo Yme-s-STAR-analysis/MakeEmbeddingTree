@@ -20,7 +20,11 @@ class TTree;
 class TH2D;
 class TNtuple;
 
-class StRefMultCorr;
+class StCFMult;
+class TpcShiftTool;
+class TriggerTool;
+class MeanDcaTool;
+class CentCorrTool;
 
 class StEmbeddingMaker : public StMaker {
 	public:
@@ -48,7 +52,11 @@ class StEmbeddingMaker : public StMaker {
 
 		Int_t targetID;
 
-		StRefMultCorr* corr;
+		StCFMult* mtMult;
+		TpcShiftTool* mtShift;
+		CentCorrTool* mtCent;
+		MeanDcaTool* mtDca;
+		TriggerTool* mtTrg;
 
 		TNtuple* fDstTree;
 
