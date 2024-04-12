@@ -18,7 +18,11 @@ void readPicoDst(const Char_t *inputFile = "file.list", TString JobIdName = "tpc
     gSystem->Load("StPicoEvent");
     gSystem->Load("StPicoDstMaker");
     gSystem->Load("StEmbeddingMaker");
-    gSystem->Load("StRefMultCorr");
+    gSystem->Load("StCFMult");
+    gSystem->Load("TpcShiftTool");
+    gSystem->Load("CentCorrTool");
+    gSystem->Load("MeanDcaTool");
+    gSystem->Load("TriggerTool");
 
     chain = new StChain();
 
