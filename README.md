@@ -2,7 +2,7 @@
 
 Get embedding reduced tree
 
-`version 4.0`
+`version 4.1`
 
 `author: yghuang`
 
@@ -21,6 +21,12 @@ Get embedding reduced tree
 5. Before submitting the jobs in step 4, you can prepare a small demo in `test.list` and directly run `./runtest.sh` for testing.
 
 ## Change log
+
+18.04.2024 by yghuang (v4.1):
+
+> DCA calculation approach is now changed
+>
+> StCFMult module is updated to v2.3
 
 12.04.2024 by yghuang (v4.0):
 
