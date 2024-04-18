@@ -14,6 +14,7 @@
 #include "StPicoEvent/StPicoEpdHit.h"
 #include "StPicoEvent/StPicoEvent.h"
 #include "StPicoEvent/StPicoTrack.h"
+#include "StPicoEvent/StPicoPhysicalHelix.h"
 #include "StPicoEvent/StPicoMcTrack.h"
 #include "StPicoEvent/StPicoMcVertex.h"
 #include "StThreeVectorF.hh"
@@ -270,6 +271,7 @@ Int_t StEmbeddingMaker::Make() {
 		TVector3 rcMom;
 		StThreeVector<Float_t> rcMom3;
 		StLorentzVector<Float_t> rcMom4;
+		Double_t dca = -999.0;
 		if (flag) {
 			rcMom = rcTrack->pMom();
 			rcMom3 = StThreeVector<Float_t>(rcMom.X(), rcMom.Y(), rcMom.Z());
@@ -277,6 +279,8 @@ Int_t StEmbeddingMaker::Make() {
 			Float_t MP = 0.938272;
 			Float_t EP = sqrt(rcMom3.mag2() + MP*MP);
 			rcMom4 = StLorentzVector<Float_t>(rcMom3, EP);
+			StPicoPhysicalHelix helix = rcTrack->helix(mB);
+			dca = fabs(helix.geometricSignedDistance(pVtx));
 		}
 
 		// prepare the TNtuple
@@ -292,7 +296,7 @@ Int_t StEmbeddingMaker::Make() {
 		array[idx++] = (Float_t)flag ? rcTrack->nHitsFit() * 1.0 : 0.0;
 		array[idx++] = (Float_t)flag ? rcTrack->nHitsDedx() * 1.0 : 0.0;
 		array[idx++] = (Float_t)flag ? (rcTrack->nHitsFit() * 1.0) / (rcTrack->nHitsPoss() * 1.0) : 0.0;
-		array[idx++] = (Float_t)flag ? rcTrack->gDCA(vx, vy, vz) : 0.0;
+		array[idx++] = (Float_t)flag ? dca : 0.0;
 
 		fDstTree->Fill(array);
 	}
