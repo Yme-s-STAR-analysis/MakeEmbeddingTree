@@ -2,7 +2,7 @@
 
 Get embedding reduced tree
 
-`version 4.1`
+`version 4.2`
 
 `author: yghuang`
 
@@ -21,6 +21,10 @@ Get embedding reduced tree
 5. Before submitting the jobs in step 4, you can prepare a small demo in `test.list` and directly run `./runtest.sh` for testing.
 
 ## Change log
+
+25.06.2024 by yghuang (v4.2):
+
+> Add Vertex module
 
 18.04.2024 by yghuang (v4.1):
 
