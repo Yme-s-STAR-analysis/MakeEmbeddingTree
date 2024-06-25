@@ -25,6 +25,7 @@ class TpcShiftTool;
 class TriggerTool;
 class MeanDcaTool;
 class CentCorrTool;
+class VtxShiftTool;
 
 class StEmbeddingMaker : public StMaker {
 	public:
@@ -57,6 +58,7 @@ class StEmbeddingMaker : public StMaker {
 		CentCorrTool* mtCent;
 		MeanDcaTool* mtDca;
 		TriggerTool* mtTrg;
+		VtxShiftTool* mtVtx;
 
 		TNtuple* fDstTree;
 

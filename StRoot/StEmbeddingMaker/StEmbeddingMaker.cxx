@@ -90,6 +90,9 @@ Int_t StEmbeddingMaker::Init() {
 	// trigger tool
 	mtTrg = new TriggerTool();
 
+	// vertext shift tool
+	mtVtx = new VtxShiftTool();
+
 	nEvents = 0;
 
 	return kStOK;
@@ -138,18 +141,7 @@ Int_t StEmbeddingMaker::Make() {
 	Double_t vz = pVtx.Z();
 	Float_t mB = event->bField();
 
-	if (fabs(vx) < 1.e-5 && 
-		fabs(vy) < 1.e-5 &&
-		fabs(vz) < 1.e-5) {
-		return kStOK;
-	}
-
-	// using Ashish's shifted vr cut
-	// -> see: https://drupal.star.bnl.gov/STAR/system/files/Vr_xy_N_Vzcut.txt
-	vx = vx - 0.0417;
-	vy = vy + 0.2715;
-	Double_t vr = sqrt(vx * vx + vy * vy);
-
+	auto vr = mtVtx->GetShiftedVr(vx, vy);
 	if (vr >= 1.0 || fabs(vz) > 50.0) {
 		return kStOK;
 	}
