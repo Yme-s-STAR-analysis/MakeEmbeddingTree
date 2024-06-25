@@ -34,6 +34,7 @@
 #include "StRoot/TpcShiftTool/TpcShiftTool.h"
 #include "StRoot/TriggerTool/TriggerTool.h"
 #include "StRoot/StCFMult/StCFMult.h"
+#include "StRoot/VtxShiftTool/VtxShiftTool.h"
 
 StEmbeddingMaker::StEmbeddingMaker(
 	const char* name, 
