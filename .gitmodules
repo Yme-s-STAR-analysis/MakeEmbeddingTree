@@ -1,6 +1,7 @@
 [submodule "StRoot/CentCorrTool"]
 	path = StRoot/CentCorrTool
 	url = https://github.com/Yme-s-STAR-analysis/CentCorrTool
+    branch = main
 [submodule "StRoot/MeanDcaTool"]
 	path = StRoot/MeanDcaTool
 	url = https://github.com/Yme-s-STAR-analysis/MeanDcaTool
@@ -10,6 +11,7 @@
 [submodule "StRoot/StCFMult"]
 	path = StRoot/StCFMult
 	url = https://github.com/Yme-s-STAR-analysis/StCFMult
+    branch = main
 [submodule "StRoot/TpcShiftTool"]
 	path = StRoot/TpcShiftTool
 	url = https://github.com/Yme-s-STAR-analysis/TpcShiftTool
